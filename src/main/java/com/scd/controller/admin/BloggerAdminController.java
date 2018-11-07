@@ -8,12 +8,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.scd.entity.Blogger;
 import com.scd.service.BloggerService;
+import com.scd.service.impl.InitComponent;
 import com.scd.util.CryptographyUtil;
 import com.scd.util.DateUtil;
 import com.scd.util.ResponseUtil;
@@ -44,9 +46,10 @@ public class BloggerAdminController {
 	@RequestMapping("/save")
 	public String save(@RequestParam("imageFile") MultipartFile imageFile,Blogger blogger,HttpServletRequest request,HttpServletResponse response)throws Exception{
 		if(!imageFile.isEmpty()){
-			String filePath=request.getServletContext().getRealPath("/");
+//			String filePath=request.getServletContext().getRealPath("/");
+			String filePath = InitComponent.config.getString("image.path");
 			String imageName=DateUtil.getCurrentDateStr()+"."+imageFile.getOriginalFilename().split("\\.")[1];
-			imageFile.transferTo(new File(filePath+"static/userImages/"+imageName));
+			imageFile.transferTo(new File(filePath+File.separator+imageName));
 			blogger.setImageName(imageName);
 		}
 		int resultTotal=bloggerService.update(blogger);

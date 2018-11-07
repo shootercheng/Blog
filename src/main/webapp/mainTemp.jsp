@@ -51,7 +51,7 @@
 					博主信息
 				</div>
 				<div class="user_image">
-					<img src="${pageContext.request.contextPath}/static/userImages/${blogger.imageName }"/>
+					<img src="/img/user/${blogger.imageName }"/>
 				</div>
 				<div class="nickName">${blogger.nickName }</div>
 				<div class="userSign">(${blogger.sign })</div>
