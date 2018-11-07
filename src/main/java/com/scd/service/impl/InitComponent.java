@@ -1,16 +1,20 @@
 package com.scd.service.impl;
 
+import java.io.File;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import com.scd.service.impl.InitComponent;
 import com.scd.entity.Blog;
 import com.scd.entity.BlogType;
 import com.scd.entity.Blogger;
@@ -30,13 +34,37 @@ public class InitComponent implements ServletContextListener,ApplicationContextA
 
 	private static ApplicationContext applicationContext;
 	
+	public static PropertiesConfiguration config;
+	
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		// TODO Auto-generated method stub
-		this.applicationContext=applicationContext;
+		InitComponent.applicationContext=applicationContext;
 	}
+	
+	public void initConfig(ServletContext application) throws ConfigurationException{
+		String projectPath = application.getRealPath("/");
+		File file = new File(projectPath + "config" + File.separator + "file.properties");
+		if(file.exists()){
+			config = new PropertiesConfiguration(file);
+			String filePath = config.getString("image.path");
+			File file2 = new File(filePath);
+			if(!file2.exists()){
+				file2.mkdirs();
+			}
+		}else{
+			throw new RuntimeException("can not find path:"+file.getPath());
+		}
+	}
+	
 
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		ServletContext application=servletContextEvent.getServletContext();
+		try {
+			initConfig(application);
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+//		config.getString(key);
 		BloggerService bloggerService=(BloggerService) applicationContext.getBean("bloggerService");
 		Blogger blogger=bloggerService.find(); // 查询博主信息
 		blogger.setPassword(null);
