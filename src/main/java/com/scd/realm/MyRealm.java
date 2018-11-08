@@ -15,8 +15,8 @@ import com.scd.entity.Blogger;
 import com.scd.service.BloggerService;
 
 /**
- * ×Ô¶¨ÒåRealm
- * @author scd_Ğ¡·æ
+ * è‡ªå®šä¹‰Realm
+ * @author scd_å°é”‹
  *
  */
 public class MyRealm extends AuthorizingRealm{
@@ -25,7 +25,7 @@ public class MyRealm extends AuthorizingRealm{
 	private BloggerService bloggerService;
 	
 	/**
-	 * Îªµ±ÏŞÇ°µÇÂ¼µÄÓÃ»§ÊÚÓè½ÇÉ«ºÍÈ¨
+	 * ä¸ºå½“é™å‰ç™»å½•çš„ç”¨æˆ·æˆäºˆè§’è‰²å’Œæƒ
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -33,19 +33,33 @@ public class MyRealm extends AuthorizingRealm{
 	}
 
 	/**
-	 * ÑéÖ¤µ±Ç°µÇÂ¼µÄÓÃ»§
+	 * éªŒè¯å½“å‰ç™»å½•çš„ç”¨æˆ·
 	 */
-	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+	protected AuthenticationInfo doGetAuthenticationInfoOld(AuthenticationToken token) throws AuthenticationException {
 		String userName=(String)token.getPrincipal();
 		Blogger blogger=bloggerService.getByUserName(userName);
 		if(blogger!=null){
-			SecurityUtils.getSubject().getSession().setAttribute("currentUser", blogger); // µ±Ç°ÓÃ»§ĞÅÏ¢´æµ½sessionÖĞ
+			SecurityUtils.getSubject().getSession().setAttribute("currentUser", blogger);
 			AuthenticationInfo authcInfo=new SimpleAuthenticationInfo(blogger.getUserName(),blogger.getPassword(),"xx");
 			return authcInfo;
 		}else{
 			return null;				
 		}
+	}
+
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+		String userName=(String)token.getPrincipal();
+		String password = new String((char[]) token.getCredentials());
+		Blogger blogger=bloggerService.getByUserName(userName);
+		if(blogger == null){
+			throw new UnknownAccountException("ç”¨æˆ·ä¸å­˜åœ¨!");
+		}
+		if(password == null || !password.equals(blogger.getPassword())){
+			throw new IncorrectCredentialsException("å¯†ç é”™è¯¯!");
+		}
+		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userName, password, getName());
+		return info;
 	}
 
 }
