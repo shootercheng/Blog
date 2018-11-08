@@ -15,8 +15,8 @@ import com.scd.service.BloggerService;
 import com.scd.util.CryptographyUtil;
 
 /**
- * ²©Ö÷Controller²ã
- * @author scd_Ğ¡·æ
+ * åšä¸»Controllerå±‚
+ * @author scd_å°é”‹
  *
  */
 @Controller
@@ -27,7 +27,7 @@ public class BloggerController {
 	private BloggerService bloggerService;
 	
 	/**
-	 * ÓÃ»§µÇÂ¼
+	 * ç”¨æˆ·ç™»å½•
 	 * @param blogger
 	 * @param request
 	 * @return
@@ -37,18 +37,19 @@ public class BloggerController {
 		Subject subject=SecurityUtils.getSubject();
 		UsernamePasswordToken token=new UsernamePasswordToken(blogger.getUserName(), CryptographyUtil.md5(blogger.getPassword(), "scd"));
 		try{
-			subject.login(token); // µÇÂ¼ÑéÖ¤
+			subject.login(token); // ç™»å½•éªŒè¯
 			return "redirect:/admin/main.jsp";
 		}catch(Exception e){
 			e.printStackTrace();
 			request.setAttribute("blogger", blogger);
-			request.setAttribute("errorInfo", "ÓÃ»§Ãû»òÃÜÂë´íÎó£¡");
+// 			request.setAttribute("errorInfo", "ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯ï¼");
+			request.setAttribute("errorInfo", e.getMessage());
 			return "login";
 		}
 	}
 	
 	/**
-	 * ²éÕÒ²©Ö÷ĞÅÏ¢
+	 * æŸ¥æ‰¾åšä¸»ä¿¡æ¯
 	 * @return
 	 * @throws Exception
 	 */
@@ -57,7 +58,7 @@ public class BloggerController {
 		ModelAndView mav=new ModelAndView();
 		mav.addObject("blogger",bloggerService.find());
 		mav.addObject("mainPage", "foreground/blogger/info.jsp");
-		mav.addObject("pageTitle","¹ØÓÚ²©Ö÷_Java¿ªÔ´²©¿ÍÏµÍ³");
+		mav.addObject("pageTitle","å…³äºåšä¸»_Javaå¼€æºåšå®¢ç³»ç»Ÿ");
 		mav.setViewName("mainTemp");
 		return mav;
 	}
