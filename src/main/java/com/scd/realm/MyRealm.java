@@ -58,6 +58,7 @@ public class MyRealm extends AuthorizingRealm{
 		if(password == null || !password.equals(blogger.getPassword())){
 			throw new IncorrectCredentialsException("密码错误!");
 		}
+		SecurityUtils.getSubject().getSession().setAttribute("currentUser", blogger);
 		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userName, password, getName());
 		return info;
 	}
