@@ -16,3 +16,9 @@ utf8-jsp\jsp\lib
 ### 配置 /static/ueditor/jsp/config.json
 
 imagePathFormat
+
+
+### 目前部署地址
+
+
+[http://119.27.167.41:8080/myblog/](http://119.27.167.41:8080/myblog/)
